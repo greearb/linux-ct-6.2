@@ -2388,7 +2388,7 @@ ieee80211_rx_h_defragment(struct ieee80211_rx_data *rx)
 
  out:
 	ieee80211_led_rx(rx->local);
-	if (rx->sta)
+	if (rx->link_sta)
 		rx->link_sta->rx_stats.packets++;
 	return RX_CONTINUE;
 }
@@ -3622,7 +3622,7 @@ ieee80211_rx_h_action(struct ieee80211_rx_data *rx)
 	return RX_CONTINUE;
 
  handled:
-	if (rx->sta)
+	if (rx->link_sta)
 		rx->link_sta->rx_stats.packets++;
 	dev_kfree_skb(rx->skb);
 	return RX_QUEUED;
@@ -3666,7 +3666,7 @@ ieee80211_rx_h_userspace_mgmt(struct ieee80211_rx_data *rx)
 	}
 
 	if (cfg80211_rx_mgmt_ext(&rx->sdata->wdev, &info)) {
-		if (rx->sta)
+		if (rx->link_sta)
 			rx->link_sta->rx_stats.packets++;
 		dev_kfree_skb(rx->skb);
 		return RX_QUEUED;
@@ -3704,7 +3704,7 @@ ieee80211_rx_h_action_post_userspace(struct ieee80211_rx_data *rx)
 	return RX_CONTINUE;
 
  handled:
-	if (rx->sta)
+	if (rx->link_sta)
 		rx->link_sta->rx_stats.packets++;
 	dev_kfree_skb(rx->skb);
 	return RX_QUEUED;
@@ -3924,7 +3924,7 @@ static void ieee80211_rx_handlers_result(struct ieee80211_rx_data *rx,
 	switch (res) {
 	case RX_DROP_MONITOR:
 		I802_DEBUG_INC(rx->sdata->local->rx_handlers_drop);
-		if (rx->sta)
+		if (rx->link_sta)
 			rx->link_sta->rx_stats.dropped++;
 		fallthrough;
 	case RX_CONTINUE: {
@@ -3943,7 +3943,7 @@ static void ieee80211_rx_handlers_result(struct ieee80211_rx_data *rx,
 		}
 	case RX_DROP_UNUSABLE:
 		I802_DEBUG_INC(rx->sdata->local->rx_handlers_drop);
-		if (rx->sta)
+		if (rx->link_sta)
 			rx->link_sta->rx_stats.dropped++;
 		dev_kfree_skb(rx->skb);
 		break;
